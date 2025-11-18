@@ -42,6 +42,7 @@ interface Order {
   updatedAt?: string;
   deliveredAt?: string;
   trackingNumber?: string;
+  trackingId?: string;
   returnReason?: string;
   returnStatus?: string;
   refundUpiId?: string;
