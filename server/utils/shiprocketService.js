@@ -111,14 +111,21 @@ async function getShipmentTrack(shipmentId) {
   try {
     const token = await getAuthToken();
 
-    const response = await axios.get(`${SHIPROCKET_BASE_URL}/shipments/track/shipment/${shipmentId}`, {
+    const response = await fetch(`${SHIPROCKET_BASE_URL}/shipments/track/shipment/${shipmentId}`, {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    if (response.data && response.data.track_shipments && response.data.track_shipments.length > 0) {
-      const shipment = response.data.track_shipments[0];
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data && data.track_shipments && data.track_shipments.length > 0) {
+      const shipment = data.track_shipments[0];
       return {
         shipmentId,
         orderId: shipment.order_id,
@@ -134,7 +141,7 @@ async function getShipmentTrack(shipmentId) {
 
     return null;
   } catch (error) {
-    console.error('Shiprocket shipment track error:', error.response?.data || error.message);
+    console.error('Shiprocket shipment track error:', error.message);
     throw new Error('Failed to fetch shipment tracking');
   }
 }
