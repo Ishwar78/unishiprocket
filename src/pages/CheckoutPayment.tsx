@@ -412,6 +412,38 @@ const CheckoutPayment = () => {
               throw new Error(vjson.message || 'Verification failed');
             }
 
+            try {
+              const raw = localStorage.getItem('uni_orders_v1');
+              const arr = raw ? (JSON.parse(raw) as any[]) : [];
+              const newOrderId = String(vjson.data?._id || vjson.data?.id ?? 'local_' + Date.now());
+              const order = {
+                _id: newOrderId,
+                name: customerDetails.name,
+                phone: customerDetails.phone,
+                address: customerDetails.address,
+                city: customerDetails.city,
+                state: customerDetails.state,
+                pincode: customerDetails.pincode,
+                landmark: customerDetails.landmark,
+                total: total + shippingCharges,
+                paymentMethod: 'Razorpay',
+                status: 'paid',
+                createdAt: new Date().toISOString(),
+                items: items.map((i) => ({
+                  id: i.id,
+                  title: i.title,
+                  price: i.price,
+                  qty: i.qty,
+                  image: i.image,
+                  size: i.meta?.size,
+                })),
+              } as any;
+              localStorage.setItem('uni_orders_v1', JSON.stringify([order, ...arr]));
+              localStorage.setItem('uni_last_order_id', newOrderId);
+            } catch (e) {
+              console.error('Failed to persist local order', e);
+            }
+
             toast({
               title: 'Payment successful ✓',
               description: 'Your order has been confirmed',
