@@ -59,6 +59,7 @@ const invoicesRoutes = require('./routes/invoices');
 const inquiryRoutes = require('./routes/inquiry');
 const couponsRoutes = require('./routes/coupons');
 const paymentRoutes = require('./routes/payment');
+const trackingRoutes = require('./routes/tracking');
 
 const app = express();
 const PORT = process.env.PORT || 5055;
@@ -91,9 +92,10 @@ app.use(
       if (ALLOWED_ORIGINS.has(origin)) return cb(null, true);
 
       // Allow any subdomain of uni10.in (future admin/app subdomains)
+      // Also allow fly.dev domains for deployed apps
       try {
         const u = new URL(origin);
-        if (u.hostname.endsWith('.uni10.in')) return cb(null, true);
+        if (u.hostname.endsWith('.uni10.in') || u.hostname.endsWith('.fly.dev')) return cb(null, true);
       } catch (_) {
         // ignore parse error
       }
@@ -108,14 +110,6 @@ app.use(
   })
 );
 
-// Make sure preflight never fails
-app.options(
-  '*',
-  cors({
-    origin: (_origin, cb) => cb(null, true),
-    credentials: true,
-  })
-);
 
 /* ---------------------------- CORE MIDDLEWARES -------------------------- */
 app.use(cookieParser());
@@ -183,6 +177,7 @@ app.use('/api/support', supportRoutes);
 app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 /* ------------------------------ START APP ------------------------------- */
 async function start() {
