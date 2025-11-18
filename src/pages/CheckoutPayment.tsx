@@ -337,6 +337,8 @@ const CheckoutPayment = () => {
       }
 
       // Create order on backend
+      const totalWithShipping = total + shippingCharges;
+
       const response = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: {
@@ -345,10 +347,11 @@ const CheckoutPayment = () => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          amount: total,
+          amount: totalWithShipping,
           currency: 'INR',
           items,
           appliedCoupon,
+          shipping: shippingCharges,
         }),
       });
 
