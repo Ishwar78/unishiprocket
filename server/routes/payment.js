@@ -154,6 +154,8 @@ router.post('/verify', requireAuth, async (req, res) => {
       city,
       state,
       pincode,
+      landmark,
+      shipping,
     } = req.body || {};
 
     if (!razorpayOrderId || !String(razorpayOrderId).trim()) {
