@@ -143,6 +143,7 @@ const App = () => (
               <Route path="/admin/orders/:id/invoice" element={<InvoicePage />} />
               <Route path="/account/orders/:id/invoice" element={<InvoicePage />} />
               <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/track" element={<TrackOrder />} />
               <Route path="/page/:slug" element={<PageDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="/contact" element={<Contact />} />
