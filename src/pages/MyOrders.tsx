@@ -274,6 +274,19 @@ const MyOrders = () => {
                         >
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
+                        {order.trackingId && order.status === 'shipped' && (
+                          <div className="text-xs bg-blue-50 border border-blue-200 rounded p-2">
+                            <p className="text-blue-900 font-medium">Tracking ID: {order.trackingId}</p>
+                            <a
+                              href={`https://shiprocket.co.in/track/${order.trackingId}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              Track your order
+                            </a>
+                          </div>
+                        )}
                         {order.returnStatus && order.returnStatus !== 'None' && (
                           <Badge
                             variant="outline"
