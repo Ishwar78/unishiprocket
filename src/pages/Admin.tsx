@@ -3984,6 +3984,9 @@ const handleProductSubmit = async (e: React.FormEvent) => {
                     <div><span className="text-muted-foreground">City:</span> {orderDetail.shipping?.city || '-'}</div>
                     <div><span className="text-muted-foreground">State:</span> {orderDetail.shipping?.state || '-'}</div>
                     <div><span className="text-muted-foreground">Pincode:</span> {orderDetail.shipping?.pincode || '-'}</div>
+                    {(orderDetail.shipping?.landmark || orderDetail.landmark) && (
+                      <div className="md:col-span-2"><span className="text-muted-foreground">Landmark:</span> {orderDetail.shipping?.landmark || orderDetail.landmark}</div>
+                    )}
                   </div>
                 </div>
 

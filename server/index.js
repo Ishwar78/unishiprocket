@@ -60,6 +60,7 @@ const inquiryRoutes = require('./routes/inquiry');
 const couponsRoutes = require('./routes/coupons');
 const paymentRoutes = require('./routes/payment');
 const trackingRoutes = require('./routes/tracking');
+const shippingRoutes = require('./routes/shipping');
 
 const app = express();
 const PORT = process.env.PORT || 5055;
@@ -178,6 +179,7 @@ app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/shipping', shippingRoutes);
 
 /* ------------------------------ START APP ------------------------------- */
 async function start() {

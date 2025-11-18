@@ -154,6 +154,8 @@ router.post('/verify', requireAuth, async (req, res) => {
       city,
       state,
       pincode,
+      landmark,
+      shipping,
     } = req.body || {};
 
     if (!razorpayOrderId || !String(razorpayOrderId).trim()) {
@@ -243,8 +245,10 @@ router.post('/verify', requireAuth, async (req, res) => {
         city: city || req.user.city,
         state: state || req.user.state,
         pincode: pincode || req.user.pincode,
+        landmark: landmark || '',
         paymentMethod: 'Razorpay',
         items,
+        shipping: Number(shipping || 0),
         total: total || 0,
         status: 'paid',
       });
@@ -280,7 +284,7 @@ router.post('/verify', requireAuth, async (req, res) => {
 /* ---------------------------- Manual UPI submit ------------------------- */
 router.post('/manual', requireAuth, async (req, res) => {
   try {
-    const { transactionId, amount, paymentMethod, items, appliedCoupon, name, phone, address, city, state, pincode } = req.body || {};
+    const { transactionId, amount, paymentMethod, items, appliedCoupon, name, phone, address, city, state, pincode, landmark, shipping } = req.body || {};
 
     if (!transactionId || !String(transactionId).trim()) {
       return res.status(400).json({ ok: false, message: 'Valid transaction ID is required' });
@@ -349,8 +353,10 @@ router.post('/manual', requireAuth, async (req, res) => {
       city: city || req.user.city,
       state: state || req.user.state,
       pincode: pincode || req.user.pincode,
+      landmark: landmark || '',
       paymentMethod: paymentMethod || 'UPI',
       items,
+      shipping: Number(shipping || 0),
       total: parsedAmount,
       status: 'pending',
       upi: {

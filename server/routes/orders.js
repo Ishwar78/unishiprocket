@@ -20,6 +20,7 @@ router.post('/', authOptional, async (req, res) => {
     const city = body.city || body.customer?.city || '';
     const state = body.state || body.customer?.state || '';
     const pincode = body.pincode || body.customer?.pincode || '';
+    const landmark = body.landmark || body.customer?.landmark || '';
     const items = Array.isArray(body.items) ? body.items : [];
     if (!items.length) return res.status(400).json({ ok: false, message: 'No items' });
 
@@ -95,10 +96,10 @@ router.post('/', authOptional, async (req, res) => {
       phone,
       address,
       paymentMethod,
-      address,
       city,
       state,
       pincode,
+      landmark,
       items,
       total,
       status,

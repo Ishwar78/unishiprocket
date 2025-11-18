@@ -25,6 +25,7 @@ interface Order {
   city: string;
   state: string;
   pincode: string;
+  landmark?: string;
   paymentMethod: string;
   items: OrderItem[];
   subtotal: number;
@@ -248,6 +249,11 @@ const OrderSuccess = () => {
               <CardContent className="text-sm space-y-2">
                 <p className="font-semibold">{order.name}</p>
                 <p className="text-muted-foreground">{order.address}</p>
+                {order.landmark && (
+                  <p className="text-muted-foreground">
+                    <strong>Landmark:</strong> {order.landmark}
+                  </p>
+                )}
                 <p className="text-muted-foreground">
                   {order.city}, {order.state} {order.pincode}
                 </p>

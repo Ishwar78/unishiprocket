@@ -146,9 +146,67 @@ async function getShipmentTrack(shipmentId) {
   }
 }
 
+async function getAreaWiseCharges(pincode) {
+  try {
+    const token = await getAuthToken();
+
+    const response = await fetch(`${SHIPROCKET_BASE_URL}/settings/warehouse/serviceability`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        pickup_postcode: process.env.SHIPROCKET_PICKUP_PINCODE || '110001',
+        delivery_postcode: String(pincode),
+        weight: 0.5,
+        cod: 1,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      console.warn('Shiprocket serviceability check failed:', error);
+      return {
+        available: false,
+        charges: 0,
+        message: 'Service not available for this area',
+      };
+    }
+
+    const data = await response.json();
+
+    if (data.status === 200 && data.data && data.data.length > 0) {
+      const serviceOption = data.data[0];
+      return {
+        pincode,
+        available: true,
+        charges: Number(serviceOption.rate || 0),
+        serviceName: serviceOption.name || 'Standard',
+        deliveryDays: Number(serviceOption.delivery_days || 0),
+        courierCompany: serviceOption.courier_name || 'Shiprocket',
+      };
+    }
+
+    return {
+      available: false,
+      charges: 0,
+      message: 'Service not available for this area',
+    };
+  } catch (error) {
+    console.error('Shiprocket area charges error:', error.message);
+    return {
+      available: false,
+      charges: 0,
+      message: 'Failed to fetch shipping charges',
+    };
+  }
+}
+
 module.exports = {
   getAuthToken,
   getTrackingDetails,
   searchOrdersByPhone,
   getShipmentTrack,
+  getAreaWiseCharges,
 };

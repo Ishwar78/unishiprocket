@@ -29,6 +29,7 @@ interface Order {
   city: string;
   state: string;
   pincode: string;
+  landmark?: string;
   paymentMethod: string;
   items: OrderItem[];
   subtotal: number;

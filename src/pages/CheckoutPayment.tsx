@@ -69,7 +69,11 @@ const CheckoutPayment = () => {
     city: localStorage.getItem('userCity') || '',
     state: localStorage.getItem('userState') || '',
     pincode: localStorage.getItem('userPincode') || '',
+    landmark: localStorage.getItem('userLandmark') || '',
   });
+
+  const [shippingCharges, setShippingCharges] = useState(0);
+  const [fetchingCharges, setFetchingCharges] = useState(false);
 
   const buildUpiUri = (scheme?: string) => {
     const pa = encodeURIComponent(paymentSettings?.upiId || '');
@@ -80,6 +84,38 @@ const CheckoutPayment = () => {
     const base = scheme ? scheme : 'upi://pay';
     const sep = base.includes('?') ? '&' : '?';
     return `${base}${sep}pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
+  };
+
+  const fetchShippingCharges = async (pincode: string) => {
+    if (!pincode || pincode.length < 5) {
+      setShippingCharges(0);
+      return;
+    }
+
+    try {
+      setFetchingCharges(true);
+      const response = await fetch('/api/shipping/charges', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pincode }),
+      });
+
+      const data = await response.json();
+
+      if (data.ok && data.data) {
+        const charges = data.data.available ? Number(data.data.charges || 0) : 0;
+        setShippingCharges(charges);
+      } else {
+        setShippingCharges(0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch shipping charges:', error);
+      setShippingCharges(0);
+    } finally {
+      setFetchingCharges(false);
+    }
   };
 
   const openUpiApp = (scheme?: string) => {
@@ -106,6 +142,13 @@ const CheckoutPayment = () => {
     fetchPaymentSettings();
     fetchRazorpaySettings();
   }, []);
+
+  // Fetch shipping charges when pincode changes
+  useEffect(() => {
+    if (customerDetails.pincode) {
+      fetchShippingCharges(customerDetails.pincode);
+    }
+  }, [customerDetails.pincode]);
 
   const fetchPaymentSettings = async () => {
     try {
@@ -164,6 +207,8 @@ const CheckoutPayment = () => {
     try {
       setSubmitting(true);
 
+      const totalWithShipping = total + shippingCharges;
+
       const payload: any = {
         name: customerDetails.name,
         phone: customerDetails.phone,
@@ -171,6 +216,7 @@ const CheckoutPayment = () => {
         city: customerDetails.city,
         state: customerDetails.state,
         pincode: customerDetails.pincode,
+        landmark: customerDetails.landmark,
         paymentMethod: 'COD',
         items: items.map((i) => ({
           id: i.id,
@@ -184,7 +230,8 @@ const CheckoutPayment = () => {
         })),
         subtotal,
         discountAmount,
-        total,
+        shipping: shippingCharges,
+        total: totalWithShipping,
         coupon: appliedCoupon
           ? { code: appliedCoupon.code, discount: appliedCoupon.discount }
           : undefined,
@@ -196,6 +243,7 @@ const CheckoutPayment = () => {
           city: customerDetails.city,
           state: customerDetails.state,
           pincode: customerDetails.pincode,
+          landmark: customerDetails.landmark,
         },
       };
 
@@ -289,6 +337,8 @@ const CheckoutPayment = () => {
       }
 
       // Create order on backend
+      const totalWithShipping = total + shippingCharges;
+
       const response = await fetch('/api/payment/create-order', {
         method: 'POST',
         headers: {
@@ -297,10 +347,11 @@ const CheckoutPayment = () => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          amount: total,
+          amount: totalWithShipping,
           currency: 'INR',
           items,
           appliedCoupon,
+          shipping: shippingCharges,
         }),
       });
 
@@ -345,13 +396,15 @@ const CheckoutPayment = () => {
                 razorpaySignature: response.razorpay_signature,
                 items,
                 appliedCoupon,
-                total,
+                shipping: shippingCharges,
+                total: total + shippingCharges,
                 name: customerDetails.name,
                 phone: customerDetails.phone,
                 address: customerDetails.address,
                 city: customerDetails.city,
                 state: customerDetails.state,
                 pincode: customerDetails.pincode,
+                landmark: customerDetails.landmark,
               }),
             });
 
@@ -359,6 +412,38 @@ const CheckoutPayment = () => {
 
             if (!verifyRes.ok || !vjson.ok) {
               throw new Error(vjson.message || 'Verification failed');
+            }
+
+            try {
+              const raw = localStorage.getItem('uni_orders_v1');
+              const arr = raw ? (JSON.parse(raw) as any[]) : [];
+              const newOrderId = String((vjson.data?._id || vjson.data?.id) ?? 'local_' + Date.now());
+              const order = {
+                _id: newOrderId,
+                name: customerDetails.name,
+                phone: customerDetails.phone,
+                address: customerDetails.address,
+                city: customerDetails.city,
+                state: customerDetails.state,
+                pincode: customerDetails.pincode,
+                landmark: customerDetails.landmark,
+                total: total + shippingCharges,
+                paymentMethod: 'Razorpay',
+                status: 'paid',
+                createdAt: new Date().toISOString(),
+                items: items.map((i) => ({
+                  id: i.id,
+                  title: i.title,
+                  price: i.price,
+                  qty: i.qty,
+                  image: i.image,
+                  size: i.meta?.size,
+                })),
+              } as any;
+              localStorage.setItem('uni_orders_v1', JSON.stringify([order, ...arr]));
+              localStorage.setItem('uni_last_order_id', newOrderId);
+            } catch (e) {
+              console.error('Failed to persist local order', e);
             }
 
             toast({
@@ -434,6 +519,8 @@ const CheckoutPayment = () => {
     try {
       setSubmitting(true);
 
+      const totalWithShipping = total + shippingCharges;
+
       const response = await fetch('/api/payment/manual', {
         method: 'POST',
         headers: {
@@ -443,7 +530,7 @@ const CheckoutPayment = () => {
         credentials: 'include',
         body: JSON.stringify({
           transactionId: upiTransactionId.trim(),
-          amount: total,
+          amount: totalWithShipping,
           paymentMethod: 'UPI',
           items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty, image: i.image, size: i.meta?.size, productId: i.id })),
           appliedCoupon,
@@ -453,6 +540,8 @@ const CheckoutPayment = () => {
           city: customerDetails.city,
           state: customerDetails.state,
           pincode: customerDetails.pincode,
+          landmark: customerDetails.landmark,
+          shipping: shippingCharges,
         }),
       });
 
@@ -598,6 +687,17 @@ const CheckoutPayment = () => {
                     onChange={(e) => setCustomerDetails({ ...customerDetails, pincode: e.target.value })}
                   />
                 </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="landmark">Landmark (Optional)</Label>
+                  <Input
+                    id="landmark"
+                    type="text"
+                    placeholder="e.g., Near Market, Opposite Park"
+                    value={customerDetails.landmark}
+                    onChange={(e) => setCustomerDetails({ ...customerDetails, landmark: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Help delivery partner locate your address</p>
+                </div>
               </div>
             </Card>
 
@@ -720,10 +820,15 @@ const CheckoutPayment = () => {
                   </div>
                 )}
 
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shipping {fetchingCharges && <Loader2 className="inline h-3 w-3 animate-spin ml-1" />}</span>
+                  <span className="font-semibold">₹{shippingCharges.toLocaleString('en-IN')}</span>
+                </div>
+
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between">
                     <span className="font-semibold">Total Amount</span>
-                    <span className="text-2xl font-bold text-primary">₹{total.toLocaleString('en-IN')}</span>
+                    <span className="text-2xl font-bold text-primary">₹{(total + shippingCharges).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
