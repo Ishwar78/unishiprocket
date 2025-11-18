@@ -179,6 +179,7 @@ app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/coupons', couponsRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/shipping', shippingRoutes);
 
 /* ------------------------------ START APP ------------------------------- */
 async function start() {
