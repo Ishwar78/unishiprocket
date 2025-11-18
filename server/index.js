@@ -91,9 +91,10 @@ app.use(
       if (ALLOWED_ORIGINS.has(origin)) return cb(null, true);
 
       // Allow any subdomain of uni10.in (future admin/app subdomains)
+      // Also allow fly.dev domains for deployed apps
       try {
         const u = new URL(origin);
-        if (u.hostname.endsWith('.uni10.in')) return cb(null, true);
+        if (u.hostname.endsWith('.uni10.in') || u.hostname.endsWith('.fly.dev')) return cb(null, true);
       } catch (_) {
         // ignore parse error
       }
