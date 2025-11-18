@@ -35,9 +35,7 @@ export const Navbar = ({ cartItemCount = 0 }: NavbarProps) => {
           <div className="hidden md:flex items-center gap-2">
             {[
               { to: "/shop", label: "Shop" },
-
               { to: "/shop/new-arrivals", label: "New Arrivals" },
-              { to: "/track", label: "Track Order" },
               { to: "/wishlist", label: "Wishlist" },
               { to: "/contact", label: "Contact" },
             ].map((item) => (
