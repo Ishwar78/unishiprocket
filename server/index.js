@@ -109,8 +109,7 @@ app.use(
 );
 
 // Make sure preflight never fails
-app.options(
-  '*',
+app.use(
   cors({
     origin: (_origin, cb) => cb(null, true),
     credentials: true,
