@@ -417,7 +417,7 @@ const CheckoutPayment = () => {
             try {
               const raw = localStorage.getItem('uni_orders_v1');
               const arr = raw ? (JSON.parse(raw) as any[]) : [];
-              const newOrderId = String(vjson.data?._id || vjson.data?.id ?? 'local_' + Date.now());
+              const newOrderId = String((vjson.data?._id || vjson.data?.id) ?? 'local_' + Date.now());
               const order = {
                 _id: newOrderId,
                 name: customerDetails.name,
