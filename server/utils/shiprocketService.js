@@ -84,19 +84,25 @@ async function searchOrdersByPhone(phone) {
   try {
     const token = await getAuthToken();
 
-    const response = await axios.get(`${SHIPROCKET_BASE_URL}/orders/search`, {
-      params: {
-        search_type: 'mobile_number',
-        search_value: phone,
-      },
+    const url = new URL(`${SHIPROCKET_BASE_URL}/orders/search`);
+    url.searchParams.set('search_type', 'mobile_number');
+    url.searchParams.set('search_value', phone);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    return response.data.data || [];
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    return data.data || [];
   } catch (error) {
-    console.error('Shiprocket search error:', error.response?.data || error.message);
+    console.error('Shiprocket search error:', error.message);
     return [];
   }
 }
