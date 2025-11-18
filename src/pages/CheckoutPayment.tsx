@@ -69,7 +69,11 @@ const CheckoutPayment = () => {
     city: localStorage.getItem('userCity') || '',
     state: localStorage.getItem('userState') || '',
     pincode: localStorage.getItem('userPincode') || '',
+    landmark: localStorage.getItem('userLandmark') || '',
   });
+
+  const [shippingCharges, setShippingCharges] = useState(0);
+  const [fetchingCharges, setFetchingCharges] = useState(false);
 
   const buildUpiUri = (scheme?: string) => {
     const pa = encodeURIComponent(paymentSettings?.upiId || '');
