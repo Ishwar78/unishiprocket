@@ -245,8 +245,10 @@ router.post('/verify', requireAuth, async (req, res) => {
         city: city || req.user.city,
         state: state || req.user.state,
         pincode: pincode || req.user.pincode,
+        landmark: landmark || '',
         paymentMethod: 'Razorpay',
         items,
+        shipping: Number(shipping || 0),
         total: total || 0,
         status: 'paid',
       });
