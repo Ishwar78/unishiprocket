@@ -123,7 +123,10 @@ export default function AdminTracking() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="pt-20 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Header */}
       <div className="border-b pb-6">
         <h1 className="text-3xl font-bold text-gray-900">Order Tracking</h1>
@@ -335,6 +338,9 @@ export default function AdminTracking() {
           )}
         </CardContent>
       </Card>
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 }
