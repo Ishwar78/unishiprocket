@@ -126,6 +126,7 @@ router.get('/orders/:id', requireAuth, requireAdmin, async (req, res) => {
         city: doc.city || derived.city || '',
         state: (doc.state && String(doc.state).trim()) ? doc.state : '',
         pincode: (doc.pincode && String(doc.pincode).trim()) ? doc.pincode : derived.pincode || '',
+        landmark: doc.landmark || '',
       },
       items: Array.isArray(doc.items)
         ? doc.items.map((it) => ({
