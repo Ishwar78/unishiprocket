@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <title>uni10 - Premium Streetwear & Lifestyle</title>
+    <meta
+      name="description"
+      content="Discover exclusive streetwear and lifestyle products at uni10. Shop premium quality apparel, accessories, and more."
+    />
+    <meta name="author" content="uni10" />
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#EF4444" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="uni10" />
+    <link rel="manifest" href="/manifest.json?v=8" />
+
+    <!-- Favicons (use PWA icons for browser tab icon as well) -->
+    <!-- Main favicon for most browsers -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=8" />
+    <!-- High-res icon (some browsers pick this) -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=8" />
+    <!-- Fallback / shortcut icon -->
+    <link rel="shortcut icon" href="/icon-192.png?v=8" />
+    <!-- Apple touch icon (iOS home screen) -->
+    <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=8" />
+
+    <!-- Preload navbar logo (optional) -->
+    <link rel="preload" as="image" href="/uni10-logo.png?v=8" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Social -->
+    <meta property="og:title" content="uni10 - Premium Streetwear & Lifestyle" />
+    <meta property="og:description" content="Discover exclusive streetwear and lifestyle products at uni10" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/uni10-logo.png?v=8" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@uni10" />
+    <meta name="twitter:image" content="/uni10-logo.png?v=8" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js?v=7')
+            .then(() => console.log('SW registered'))
+            .catch(() => console.log('SW registration failed'));
+        });
+      }
+    </script>
+  </body>
+</html>
