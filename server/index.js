@@ -59,6 +59,7 @@ const invoicesRoutes = require('./routes/invoices');
 const inquiryRoutes = require('./routes/inquiry');
 const couponsRoutes = require('./routes/coupons');
 const paymentRoutes = require('./routes/payment');
+const trackingRoutes = require('./routes/tracking');
 
 const app = express();
 const PORT = process.env.PORT || 5055;
