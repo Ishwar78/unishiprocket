@@ -86,6 +86,38 @@ const CheckoutPayment = () => {
     return `${base}${sep}pa=${pa}&pn=${pn}&am=${am}&cu=INR&tn=${tn}`;
   };
 
+  const fetchShippingCharges = async (pincode: string) => {
+    if (!pincode || pincode.length < 5) {
+      setShippingCharges(0);
+      return;
+    }
+
+    try {
+      setFetchingCharges(true);
+      const response = await fetch('/api/shipping/charges', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pincode }),
+      });
+
+      const data = await response.json();
+
+      if (data.ok && data.data) {
+        const charges = data.data.available ? Number(data.data.charges || 0) : 0;
+        setShippingCharges(charges);
+      } else {
+        setShippingCharges(0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch shipping charges:', error);
+      setShippingCharges(0);
+    } finally {
+      setFetchingCharges(false);
+    }
+  };
+
   const openUpiApp = (scheme?: string) => {
     const uri = buildUpiUri(scheme);
     if (!uri) {
