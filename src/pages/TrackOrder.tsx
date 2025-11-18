@@ -327,10 +327,20 @@ export default function TrackOrder() {
                               )}
                             </div>
                           </div>
-                          {order.tracking && order.tracking.currentLocation && (
-                            <div className="mt-3 pt-3 border-t">
-                              <p className="text-xs text-gray-600">Current Location</p>
-                              <p className="text-sm text-gray-900">{order.tracking.currentLocation}</p>
+                          {(order.tracking && order.tracking.currentLocation) || order.landmark && (
+                            <div className="mt-3 pt-3 border-t space-y-2">
+                              {order.tracking && order.tracking.currentLocation && (
+                                <div>
+                                  <p className="text-xs text-gray-600">Current Location</p>
+                                  <p className="text-sm text-gray-900">{order.tracking.currentLocation}</p>
+                                </div>
+                              )}
+                              {order.landmark && (
+                                <div>
+                                  <p className="text-xs text-gray-600">Landmark</p>
+                                  <p className="text-sm text-gray-900">{order.landmark}</p>
+                                </div>
+                              )}
                             </div>
                           )}
                         </CardContent>
