@@ -20,6 +20,7 @@ const OrderSchema = new mongoose.Schema(
     city: { type: String, default: '' },
     state: { type: String, default: '' },
     pincode: { type: String, default: '' },
+    landmark: { type: String, default: '' },
     paymentMethod: { type: String, enum: ['COD', 'UPI', 'Razorpay'], default: 'COD' },
     items: { type: [OrderItemSchema], default: [] },
     subtotal: { type: Number, default: 0 },
