@@ -396,13 +396,15 @@ const CheckoutPayment = () => {
                 razorpaySignature: response.razorpay_signature,
                 items,
                 appliedCoupon,
-                total,
+                shipping: shippingCharges,
+                total: total + shippingCharges,
                 name: customerDetails.name,
                 phone: customerDetails.phone,
                 address: customerDetails.address,
                 city: customerDetails.city,
                 state: customerDetails.state,
                 pincode: customerDetails.pincode,
+                landmark: customerDetails.landmark,
               }),
             });
 
