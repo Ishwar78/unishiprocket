@@ -143,6 +143,13 @@ const CheckoutPayment = () => {
     fetchRazorpaySettings();
   }, []);
 
+  // Fetch shipping charges when pincode changes
+  useEffect(() => {
+    if (customerDetails.pincode) {
+      fetchShippingCharges(customerDetails.pincode);
+    }
+  }, [customerDetails.pincode]);
+
   const fetchPaymentSettings = async () => {
     try {
       setLoadingSettings(true);
