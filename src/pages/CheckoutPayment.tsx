@@ -641,6 +641,17 @@ const CheckoutPayment = () => {
                     onChange={(e) => setCustomerDetails({ ...customerDetails, pincode: e.target.value })}
                   />
                 </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="landmark">Landmark (Optional)</Label>
+                  <Input
+                    id="landmark"
+                    type="text"
+                    placeholder="e.g., Near Market, Opposite Park"
+                    value={customerDetails.landmark}
+                    onChange={(e) => setCustomerDetails({ ...customerDetails, landmark: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Help delivery partner locate your address</p>
+                </div>
               </div>
             </Card>
 
