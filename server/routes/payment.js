@@ -284,7 +284,7 @@ router.post('/verify', requireAuth, async (req, res) => {
 /* ---------------------------- Manual UPI submit ------------------------- */
 router.post('/manual', requireAuth, async (req, res) => {
   try {
-    const { transactionId, amount, paymentMethod, items, appliedCoupon, name, phone, address, city, state, pincode } = req.body || {};
+    const { transactionId, amount, paymentMethod, items, appliedCoupon, name, phone, address, city, state, pincode, landmark, shipping } = req.body || {};
 
     if (!transactionId || !String(transactionId).trim()) {
       return res.status(400).json({ ok: false, message: 'Valid transaction ID is required' });
