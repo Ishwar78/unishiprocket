@@ -353,8 +353,10 @@ router.post('/manual', requireAuth, async (req, res) => {
       city: city || req.user.city,
       state: state || req.user.state,
       pincode: pincode || req.user.pincode,
+      landmark: landmark || '',
       paymentMethod: paymentMethod || 'UPI',
       items,
+      shipping: Number(shipping || 0),
       total: parsedAmount,
       status: 'pending',
       upi: {
