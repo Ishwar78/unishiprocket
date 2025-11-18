@@ -39,14 +39,25 @@ async function getTrackingDetails(trackingNumber) {
   try {
     const token = await getAuthToken();
 
-    const response = await axios.get(`${SHIPROCKET_BASE_URL}/courier/track/number/${trackingNumber}`, {
+    const response = await fetch(`${SHIPROCKET_BASE_URL}/courier/track/number/${trackingNumber}`, {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    if (response.data && response.data.tracking_data) {
-      const tracking = response.data.tracking_data;
+    if (!response.ok) {
+      return {
+        trackingNumber,
+        status: 'not_found',
+        message: 'Tracking information not available',
+      };
+    }
+
+    const data = await response.json();
+
+    if (data && data.tracking_data) {
+      const tracking = data.tracking_data;
       return {
         trackingNumber,
         status: tracking.shipment_status || 'unknown',
@@ -64,7 +75,7 @@ async function getTrackingDetails(trackingNumber) {
       message: 'Tracking information not available',
     };
   } catch (error) {
-    console.error('Shiprocket tracking error:', error.response?.data || error.message);
+    console.error('Shiprocket tracking error:', error.message);
     throw new Error('Failed to fetch tracking details from Shiprocket');
   }
 }
