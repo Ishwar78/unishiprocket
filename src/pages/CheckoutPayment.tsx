@@ -207,6 +207,8 @@ const CheckoutPayment = () => {
     try {
       setSubmitting(true);
 
+      const totalWithShipping = total + shippingCharges;
+
       const payload: any = {
         name: customerDetails.name,
         phone: customerDetails.phone,
@@ -214,6 +216,7 @@ const CheckoutPayment = () => {
         city: customerDetails.city,
         state: customerDetails.state,
         pincode: customerDetails.pincode,
+        landmark: customerDetails.landmark,
         paymentMethod: 'COD',
         items: items.map((i) => ({
           id: i.id,
@@ -227,7 +230,8 @@ const CheckoutPayment = () => {
         })),
         subtotal,
         discountAmount,
-        total,
+        shipping: shippingCharges,
+        total: totalWithShipping,
         coupon: appliedCoupon
           ? { code: appliedCoupon.code, discount: appliedCoupon.discount }
           : undefined,
@@ -239,6 +243,7 @@ const CheckoutPayment = () => {
           city: customerDetails.city,
           state: customerDetails.state,
           pincode: customerDetails.pincode,
+          landmark: customerDetails.landmark,
         },
       };
 
