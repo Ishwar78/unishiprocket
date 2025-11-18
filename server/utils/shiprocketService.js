@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 const SHIPROCKET_BASE_URL = 'https://apiv2.shiprocket.in/v1';
 let cachedToken = null;
 let tokenExpiry = null;
@@ -10,17 +8,29 @@ async function getAuthToken() {
   }
 
   try {
-    const response = await axios.post(`${SHIPROCKET_BASE_URL}/auth/login`, {
-      email: process.env.SHIPROCKET_API_EMAIL,
-      password: process.env.SHIPROCKET_API_PASSWORD,
+    const response = await fetch(`${SHIPROCKET_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: process.env.SHIPROCKET_API_EMAIL,
+        password: process.env.SHIPROCKET_API_PASSWORD,
+      }),
     });
 
-    cachedToken = response.data.token;
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+      throw new Error(error.message || 'Auth failed');
+    }
+
+    const data = await response.json();
+    cachedToken = data.token;
     tokenExpiry = Date.now() + (23 * 60 * 60 * 1000);
 
     return cachedToken;
   } catch (error) {
-    console.error('Shiprocket auth error:', error.response?.data || error.message);
+    console.error('Shiprocket auth error:', error.message);
     throw new Error('Failed to authenticate with Shiprocket');
   }
 }
