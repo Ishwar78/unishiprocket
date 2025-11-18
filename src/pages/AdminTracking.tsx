@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +25,7 @@ import {
 import { Loader2, MapPin, Truck, ChevronRight, AlertCircle } from 'lucide-react';
 
 export default function AdminTracking() {
+  useAdminAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
