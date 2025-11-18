@@ -820,10 +820,15 @@ const CheckoutPayment = () => {
                   </div>
                 )}
 
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shipping {fetchingCharges && <Loader2 className="inline h-3 w-3 animate-spin ml-1" />}</span>
+                  <span className="font-semibold">₹{shippingCharges.toLocaleString('en-IN')}</span>
+                </div>
+
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between">
                     <span className="font-semibold">Total Amount</span>
-                    <span className="text-2xl font-bold text-primary">₹{total.toLocaleString('en-IN')}</span>
+                    <span className="text-2xl font-bold text-primary">₹{(total + shippingCharges).toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
