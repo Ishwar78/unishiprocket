@@ -482,6 +482,8 @@ const CheckoutPayment = () => {
     try {
       setSubmitting(true);
 
+      const totalWithShipping = total + shippingCharges;
+
       const response = await fetch('/api/payment/manual', {
         method: 'POST',
         headers: {
@@ -491,7 +493,7 @@ const CheckoutPayment = () => {
         credentials: 'include',
         body: JSON.stringify({
           transactionId: upiTransactionId.trim(),
-          amount: total,
+          amount: totalWithShipping,
           paymentMethod: 'UPI',
           items: items.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty, image: i.image, size: i.meta?.size, productId: i.id })),
           appliedCoupon,
@@ -501,6 +503,8 @@ const CheckoutPayment = () => {
           city: customerDetails.city,
           state: customerDetails.state,
           pincode: customerDetails.pincode,
+          landmark: customerDetails.landmark,
+          shipping: shippingCharges,
         }),
       });
 
