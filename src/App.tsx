@@ -35,6 +35,8 @@ import PageDetail from "./pages/PageDetail";
 import MyOrders from "./pages/MyOrders";
 import AdminReturns from "./pages/AdminReturns";
 import OrderSuccess from "./pages/OrderSuccess";
+import TrackOrder from "./pages/TrackOrder";
+import AdminTracking from "./pages/AdminTracking";
 
 const queryClient = new QueryClient();
 
