@@ -114,6 +114,7 @@ const NAV_ITEMS = [
     { id: 'pages', label: 'Pages', icon: LayoutDashboard },
     { id: 'orders', label: 'Orders', icon: Receipt },
     { id: 'returns', label: 'Return Requests', icon: Receipt },
+    { id: 'tracking', label: 'Order Tracking', icon: Truck },
     { id: 'users', label: 'Users', icon: Users2 },
     { id: 'reviews', label: 'User Reviews', icon: Star },
     { id: 'notifications', label: 'Notifications', icon: Megaphone },
