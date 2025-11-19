@@ -1440,16 +1440,54 @@ const handleProductSubmit = async (e: React.FormEvent) => {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, status: string) => {
+  const updateOrderStatus = async (orderId: string, status: string, trackingId?: string) => {
     try {
+      if (status === 'shipped' && !trackingId) {
+        // For shipped status, we need tracking ID. Show the input instead of updating.
+        setShippingEditId(orderId);
+        setShippingTrackingId('');
+        return;
+      }
+
+      const payload: any = { status };
+      if (status === 'shipped' && trackingId) {
+        payload.trackingId = trackingId;
+      }
+
       await apiFetch(`${ENDPOINTS.orders}/${orderId}`, {
         method: 'PUT',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(payload),
       });
       toast.success('Order status updated');
       void fetchAdminResources();
     } catch (error: any) {
       toast.error(`Failed to update order: ${error?.message ?? 'Unknown error'}`);
+    }
+  };
+
+  const saveOrderShipping = async (orderId: string) => {
+    if (!shippingTrackingId.trim()) {
+      toast.error('Please enter a tracking ID');
+      return;
+    }
+
+    try {
+      setShippingSaving(true);
+      await apiFetch(`/api/admin/orders/${orderId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          status: 'shipped',
+          trackingId: shippingTrackingId.trim(),
+        }),
+      });
+      toast.success('Order marked as shipped with tracking ID');
+      setShippingEditId(null);
+      setShippingTrackingId('');
+      void fetchAdminResources();
+    } catch (error: any) {
+      toast.error(`Failed to update order: ${error?.message ?? 'Unknown error'}`);
+    } finally {
+      setShippingSaving(false);
     }
   };
 
