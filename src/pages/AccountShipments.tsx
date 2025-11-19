@@ -57,8 +57,8 @@ function mapOrdersToShipments(orders: any[]): Shipment[] {
     return {
       orderId: o._id,
       orderDate: o.createdAt,
-      trackingId: (o.trackingId as string) || String(o._id).slice(-10),
-      courier: (o.courier as string) || "—",
+      trackingId: (o.trackingId as string) || (o.trackingNumber as string) || '',
+      courier: (o.courier as string) || "Shiprocket",
       status: status === "paid" ? "packed" : status,
       eta: o.eta || undefined,
       items: [{ image: first.image, title: first.title }],
