@@ -261,14 +261,14 @@ export default function AccountShipments() {
                 <div className="text-sm text-muted-foreground">ETA: {active.eta ? new Date(active.eta).toLocaleString() : "—"}</div>
                 {active.trackingId && (
                   <div className="bg-blue-50 border border-blue-200 rounded p-3">
-                    <div className="text-sm font-medium text-blue-900 mb-2">Tracking ID: {active.trackingId}</div>
+                    <div className="text-sm font-medium text-blue-900 mb-2">Track ID: {active.trackingId}</div>
                     <a
-                      href={`https://shiprocket.co.in/track/${active.trackingId}`}
+                      href={`https://www.shiprocket.in/shipment-tracking/`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-800 underline"
                     >
-                      Track on Shiprocket
+                      Track your order
                     </a>
                   </div>
                 )}
