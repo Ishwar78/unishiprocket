@@ -423,6 +423,9 @@ const Admin = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
   const ordersPerPage = 13;
+  const [shippingEditId, setShippingEditId] = useState<string | null>(null);
+  const [shippingTrackingId, setShippingTrackingId] = useState('');
+  const [shippingSaving, setShippingSaving] = useState(false);
 
   const pendingOrdersCount = useMemo(() => {
     try { return orders.filter((o: any) => String(o.status || '').toLowerCase() === 'pending').length; } catch { return 0; }
