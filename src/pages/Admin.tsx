@@ -2885,13 +2885,43 @@ const handleProductSubmit = async (e: React.FormEvent) => {
                           >
                             Paid
                           </Button>
-                          <Button
-                            size="sm"
-                            variant={order.status === 'shipped' ? 'default' : 'outline'}
-                            onClick={() => updateOrderStatus(orderId, 'shipped')}
-                          >
-                            Shipped
-                          </Button>
+                          {shippingEditId === orderId ? (
+                            <div className="flex gap-2 items-center">
+                              <Input
+                                placeholder="Tracking ID"
+                                value={shippingTrackingId}
+                                onChange={(e) => setShippingTrackingId(e.target.value)}
+                                className="w-40 h-9 text-sm"
+                                disabled={shippingSaving}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => saveOrderShipping(orderId)}
+                                disabled={shippingSaving || !shippingTrackingId.trim()}
+                              >
+                                {shippingSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Save'}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setShippingEditId(null);
+                                  setShippingTrackingId('');
+                                }}
+                                disabled={shippingSaving}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant={order.status === 'shipped' ? 'default' : 'outline'}
+                              onClick={() => updateOrderStatus(orderId, 'shipped')}
+                            >
+                              Shipped
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant={order.status === 'delivered' ? 'default' : 'outline'}
