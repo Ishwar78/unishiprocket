@@ -276,9 +276,9 @@ const MyOrders = () => {
                         </Badge>
                         {order.trackingId && order.status === 'shipped' && (
                           <div className="text-xs bg-blue-50 border border-blue-200 rounded p-2">
-                            <p className="text-blue-900 font-medium">Tracking ID: {order.trackingId}</p>
+                            <p className="text-blue-900 font-medium">Track ID: {order.trackingId}</p>
                             <a
-                              href={`https://shiprocket.co.in/track/${order.trackingId}`}
+                              href={`https://www.shiprocket.in/shipment-tracking/`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 underline"
