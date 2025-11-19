@@ -584,4 +584,53 @@ router.patch('/billing-info', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// PUT /api/admin/orders/:id/status - Update order status and tracking ID
+router.put('/orders/:id/status', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, trackingId } = req.body || {};
+
+    if (!status) {
+      return res.status(400).json({ ok: false, message: 'Status is required' });
+    }
+
+    const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'returned', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ ok: false, message: 'Invalid status' });
+    }
+
+    if (status === 'shipped' && !trackingId) {
+      return res.status(400).json({ ok: false, message: 'Tracking ID is required for shipped status' });
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ ok: false, message: 'Order not found' });
+    }
+
+    order.status = status;
+    if (status === 'shipped' && trackingId) {
+      order.trackingId = String(trackingId).trim();
+    }
+    if (status === 'delivered') {
+      order.deliveredAt = new Date();
+    }
+
+    await order.save();
+
+    return res.json({
+      ok: true,
+      data: {
+        id: String(order._id),
+        status: order.status,
+        trackingId: order.trackingId || '',
+        updatedAt: order.updatedAt,
+      },
+    });
+  } catch (e) {
+    console.error('Update order status error:', e);
+    return res.status(500).json({ ok: false, message: 'Server error' });
+  }
+});
+
 module.exports = router;

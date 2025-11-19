@@ -35,6 +35,7 @@ const OrderSchema = new mongoose.Schema(
       txnId: { type: String },
     },
     trackingNumber: { type: String, default: '' },
+    trackingId: { type: String, default: '' },
     deliveredAt: { type: Date },
     returnRequestedAt: { type: Date },
     refundUpiId: { type: String, default: '' },

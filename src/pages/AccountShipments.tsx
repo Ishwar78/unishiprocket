@@ -57,8 +57,8 @@ function mapOrdersToShipments(orders: any[]): Shipment[] {
     return {
       orderId: o._id,
       orderDate: o.createdAt,
-      trackingId: (o.trackingId as string) || String(o._id).slice(-10),
-      courier: (o.courier as string) || "—",
+      trackingId: (o.trackingId as string) || (o.trackingNumber as string) || '',
+      courier: (o.courier as string) || "Shiprocket",
       status: status === "paid" ? "packed" : status,
       eta: o.eta || undefined,
       items: [{ image: first.image, title: first.title }],
@@ -259,6 +259,19 @@ export default function AccountShipments() {
               <div className="grid gap-4">
                 <div className="text-sm">Status: {statusBadge(active.status)}</div>
                 <div className="text-sm text-muted-foreground">ETA: {active.eta ? new Date(active.eta).toLocaleString() : "—"}</div>
+                {active.trackingId && (
+                  <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                    <div className="text-sm font-medium text-blue-900 mb-2">Track ID: {active.trackingId}</div>
+                    <a
+                      href={`https://www.shiprocket.in/shipment-tracking/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Track your order
+                    </a>
+                  </div>
+                )}
                 <div className="mt-2">
                   <div className="font-semibold mb-2">Timeline</div>
                   <div className="relative pl-4 border-l">

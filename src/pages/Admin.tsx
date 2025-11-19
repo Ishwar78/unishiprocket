@@ -423,6 +423,9 @@ const Admin = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
   const ordersPerPage = 13;
+  const [shippingEditId, setShippingEditId] = useState<string | null>(null);
+  const [shippingTrackingId, setShippingTrackingId] = useState('');
+  const [shippingSaving, setShippingSaving] = useState(false);
 
   const pendingOrdersCount = useMemo(() => {
     try { return orders.filter((o: any) => String(o.status || '').toLowerCase() === 'pending').length; } catch { return 0; }
@@ -1437,16 +1440,54 @@ const handleProductSubmit = async (e: React.FormEvent) => {
     }
   };
 
-  const updateOrderStatus = async (orderId: string, status: string) => {
+  const updateOrderStatus = async (orderId: string, status: string, trackingId?: string) => {
     try {
+      if (status === 'shipped' && !trackingId) {
+        // For shipped status, we need tracking ID. Show the input instead of updating.
+        setShippingEditId(orderId);
+        setShippingTrackingId('');
+        return;
+      }
+
+      const payload: any = { status };
+      if (status === 'shipped' && trackingId) {
+        payload.trackingId = trackingId;
+      }
+
       await apiFetch(`${ENDPOINTS.orders}/${orderId}`, {
         method: 'PUT',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(payload),
       });
       toast.success('Order status updated');
       void fetchAdminResources();
     } catch (error: any) {
       toast.error(`Failed to update order: ${error?.message ?? 'Unknown error'}`);
+    }
+  };
+
+  const saveOrderShipping = async (orderId: string) => {
+    if (!shippingTrackingId.trim()) {
+      toast.error('Please enter a tracking ID');
+      return;
+    }
+
+    try {
+      setShippingSaving(true);
+      await apiFetch(`/api/admin/orders/${orderId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          status: 'shipped',
+          trackingId: shippingTrackingId.trim(),
+        }),
+      });
+      toast.success('Order marked as shipped with tracking ID');
+      setShippingEditId(null);
+      setShippingTrackingId('');
+      void fetchAdminResources();
+    } catch (error: any) {
+      toast.error(`Failed to update order: ${error?.message ?? 'Unknown error'}`);
+    } finally {
+      setShippingSaving(false);
     }
   };
 
@@ -2844,13 +2885,43 @@ const handleProductSubmit = async (e: React.FormEvent) => {
                           >
                             Paid
                           </Button>
-                          <Button
-                            size="sm"
-                            variant={order.status === 'shipped' ? 'default' : 'outline'}
-                            onClick={() => updateOrderStatus(orderId, 'shipped')}
-                          >
-                            Shipped
-                          </Button>
+                          {shippingEditId === orderId ? (
+                            <div className="flex gap-2 items-center">
+                              <Input
+                                placeholder="Tracking ID"
+                                value={shippingTrackingId}
+                                onChange={(e) => setShippingTrackingId(e.target.value)}
+                                className="w-40 h-9 text-sm"
+                                disabled={shippingSaving}
+                              />
+                              <Button
+                                size="sm"
+                                onClick={() => saveOrderShipping(orderId)}
+                                disabled={shippingSaving || !shippingTrackingId.trim()}
+                              >
+                                {shippingSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Save'}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setShippingEditId(null);
+                                  setShippingTrackingId('');
+                                }}
+                                disabled={shippingSaving}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant={order.status === 'shipped' ? 'default' : 'outline'}
+                              onClick={() => updateOrderStatus(orderId, 'shipped')}
+                            >
+                              Shipped
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant={order.status === 'delivered' ? 'default' : 'outline'}
